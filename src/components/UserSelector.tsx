@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { User } from '../types/User';
 import { client } from '../utils/fetchClient';
 
-export const UserSelector: React.FC = () => {
+interface Props {
+  user: User | null;
+  onSelect: (user: User) => void;
+}
+
+export const UserSelector: React.FC<Props> = ({ user, onSelect }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [isOpened, setIsOpened] = useState(false);
 
@@ -23,7 +28,7 @@ export const UserSelector: React.FC = () => {
           aria-controls="dropdown-menu"
           onClick={() => setIsOpened(prev => !prev)}
         >
-          <span>Choose a user</span>
+          <span>{user ? user.name : 'Choose a user'}</span>
 
           <span className="icon is-small">
             <i className="fas fa-angle-down" aria-hidden="true" />
@@ -33,13 +38,18 @@ export const UserSelector: React.FC = () => {
 
       <div className="dropdown-menu" id="dropdown-menu" role="menu">
         <div className="dropdown-content">
-          {users.map(user => (
+          {users.map(usr => (
             <a
-              key={user.id}
-              href={`#user-${user.id}`}
+              key={usr.id}
+              href={`#user-${usr.id}`}
               className="dropdown-item"
+              onClick={event => {
+                event.preventDefault();
+                onSelect(usr);
+                setIsOpened(false);
+              }}
             >
-              {user.name}
+              {usr.name}
             </a>
           ))}
         </div>
