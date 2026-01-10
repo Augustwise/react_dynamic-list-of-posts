@@ -18,10 +18,12 @@ export const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isPostsLoading, setIsPostsLoading] = useState(false);
   const [hasPostsLoadingError, setHasPostsLoadingError] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
     setPosts([]);
+    setSelectedPost(null);
 
     setIsPostsLoading(true);
     setHasPostsLoadingError(false);
@@ -32,6 +34,8 @@ export const App = () => {
       .catch(() => setHasPostsLoadingError(true))
       .finally(() => setIsPostsLoading(false));
   };
+
+  const canShowPosts = selectedUser && !isPostsLoading && !hasPostsLoadingError;
 
   return (
     <main className="section">
@@ -58,23 +62,18 @@ export const App = () => {
                     Something went wrong!
                   </div>
                 )}
-                {/* eslint-disable @typescript-eslint/indent */}
-                {selectedUser &&
-                  !isPostsLoading &&
-                  !hasPostsLoadingError &&
-                  posts.length === 0 && (
-                    <div
-                      className="notification is-warning"
-                      data-cy="NoPostsYet"
-                    >
-                      No posts yet
-                    </div>
-                  )}
-                {/* eslint-enable @typescript-eslint/indent */}
-                {selectedUser &&
-                  !isPostsLoading &&
-                  !hasPostsLoadingError &&
-                  posts.length > 0 && <PostsList posts={posts} />}
+                {canShowPosts && posts.length === 0 && (
+                  <div className="notification is-warning" data-cy="NoPostsYet">
+                    No posts yet
+                  </div>
+                )}
+                {canShowPosts && posts.length > 0 && (
+                  <PostsList
+                    posts={posts}
+                    selectedPostId={selectedPost?.id}
+                    onSelect={setSelectedPost}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -86,12 +85,14 @@ export const App = () => {
               'is-parent',
               'is-8-desktop',
               'Sidebar',
-              'Sidebar--open',
+              { 'Sidebar--open': !!selectedPost },
             )}
           >
-            <div className="tile is-child box is-success ">
-              <PostDetails />
-            </div>
+            {selectedPost && (
+              <div className="tile is-child box is-success ">
+                <PostDetails />
+              </div>
+            )}
           </div>
         </div>
       </div>
