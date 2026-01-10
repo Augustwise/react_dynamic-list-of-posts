@@ -21,17 +21,17 @@ export const NewCommentForm: React.FC = () => {
             <i className="fas fa-user" />
           </span>
 
-          <span
+          {/* <span
             className="icon is-small is-right has-text-danger"
             data-cy="ErrorIcon"
           >
             <i className="fas fa-exclamation-triangle" />
-          </span>
+          </span> */}
         </div>
 
-        <p className="help is-danger" data-cy="ErrorMessage">
+        {/* <p className="help is-danger" data-cy="ErrorMessage">
           Name is required
-        </p>
+        </p> */}
       </div>
 
       <div className="field" data-cy="EmailField">
@@ -52,17 +52,17 @@ export const NewCommentForm: React.FC = () => {
             <i className="fas fa-envelope" />
           </span>
 
-          <span
+          {/* <span
             className="icon is-small is-right has-text-danger"
             data-cy="ErrorIcon"
           >
             <i className="fas fa-exclamation-triangle" />
-          </span>
+          </span> */}
         </div>
 
-        <p className="help is-danger" data-cy="ErrorMessage">
+        {/* <p className="help is-danger" data-cy="ErrorMessage">
           Email is required
-        </p>
+        </p> */}
       </div>
 
       <div className="field" data-cy="BodyField">
@@ -79,14 +79,14 @@ export const NewCommentForm: React.FC = () => {
           />
         </div>
 
-        <p className="help is-danger" data-cy="ErrorMessage">
+        {/* <p className="help is-danger" data-cy="ErrorMessage">
           Enter some text
-        </p>
+        </p> */}
       </div>
 
       <div className="field is-grouped">
         <div className="control">
-          <button type="submit" className="button is-link is-loading">
+          <button type="submit" className="button is-link /* is-loading */">
             Add
           </button>
         </div>

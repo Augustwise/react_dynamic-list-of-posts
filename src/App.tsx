@@ -7,7 +7,7 @@ import './App.scss';
 import { PostsList } from './components/PostsList';
 import { PostDetails } from './components/PostDetails';
 import { UserSelector } from './components/UserSelector';
-import { Loader } from './components/Loader';
+// import { Loader } from './components/Loader';
 
 export const App = () => (
   <main className="section">
@@ -22,18 +22,18 @@ export const App = () => (
             <div className="block" data-cy="MainContent">
               <p data-cy="NoSelectedUser">No user selected</p>
 
-              <Loader />
+              {/* <Loader /> */}
 
-              <div
+              {/* <div
                 className="notification is-danger"
                 data-cy="PostsLoadingError"
               >
                 Something went wrong!
-              </div>
+              </div> */}
 
-              <div className="notification is-warning" data-cy="NoPostsYet">
+              {/* <div className="notification is-warning" data-cy="NoPostsYet">
                 No posts yet
-              </div>
+              </div> */}
 
               <PostsList />
             </div>
