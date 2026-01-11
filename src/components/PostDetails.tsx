@@ -13,6 +13,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -23,6 +24,8 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
       .then(setComments)
       .catch(() => setHasError(true))
       .finally(() => setIsLoading(false));
+
+    setIsFormVisible(false);
   }, [post.id]);
 
   return (
@@ -83,18 +86,19 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
             </>
           )}
 
-          {!isLoading && !hasError && (
+          {!isLoading && !hasError && !isFormVisible && (
             <button
               data-cy="WriteCommentButton"
               type="button"
               className="button is-link"
+              onClick={() => setIsFormVisible(true)}
             >
               Write a comment
             </button>
           )}
         </div>
 
-        <NewCommentForm />
+        {isFormVisible && <NewCommentForm />}
       </div>
     </div>
   );
