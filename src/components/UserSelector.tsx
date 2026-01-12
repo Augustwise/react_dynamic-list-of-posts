@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
 import { User } from '../types/User';
 import { client } from '../utils/fetchClient';
 
@@ -18,7 +19,10 @@ export const UserSelector: React.FC<Props> = ({ user, onSelect }) => {
   return (
     <div
       data-cy="UserSelector"
-      className={`dropdown ${isOpened ? 'is-active' : ''}`}
+      className={classNames('dropdown', { 'is-active': isOpened })}
+      onBlur={event =>
+        !event.currentTarget.contains(event.relatedTarget) && setIsOpened(false)
+      }
     >
       <div className="dropdown-trigger">
         <button
@@ -42,7 +46,9 @@ export const UserSelector: React.FC<Props> = ({ user, onSelect }) => {
             <a
               key={usr.id}
               href={`#user-${usr.id}`}
-              className="dropdown-item"
+              className={classNames('dropdown-item', {
+                'is-active': user?.id === usr.id,
+              })}
               onClick={event => {
                 event.preventDefault();
                 onSelect(usr);

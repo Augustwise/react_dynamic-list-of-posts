@@ -28,6 +28,10 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
     setIsFormVisible(false);
   }, [post.id]);
 
+  const addComment = (newComment: Comment) => {
+    setComments(prevComments => [...prevComments, newComment]);
+  };
+
   return (
     <div className="content" data-cy="PostDetails">
       <div className="content" data-cy="PostDetails">
@@ -98,7 +102,9 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
           )}
         </div>
 
-        {isFormVisible && <NewCommentForm />}
+        {isFormVisible && (
+          <NewCommentForm postId={post.id} onAdd={addComment} />
+        )}
       </div>
     </div>
   );

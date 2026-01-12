@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { client } from '../utils/fetchClient';
+import { Comment } from '../types/Comment';
 
-export const NewCommentForm: React.FC = () => {
+interface Props {
+  postId: number;
+  onAdd: (comment: Comment) => void;
+}
+
+export const NewCommentForm: React.FC<Props> = ({ postId, onAdd }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [body, setBody] = useState('');
@@ -9,6 +16,7 @@ export const NewCommentForm: React.FC = () => {
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [bodyError, setBodyError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -25,6 +33,15 @@ export const NewCommentForm: React.FC = () => {
     setBodyError(false);
   };
 
+  const handleClear = () => {
+    setName('');
+    setEmail('');
+    setBody('');
+    setNameError(false);
+    setEmailError(false);
+    setBodyError(false);
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -37,18 +54,30 @@ export const NewCommentForm: React.FC = () => {
     setEmailError(isEmailInvalid);
     setBodyError(isBodyInvalid);
 
-    if (!isNameInvalid && !isEmailInvalid && !isBodyInvalid) {
-      setBody('');
+    if (isNameInvalid || isEmailInvalid || isBodyInvalid) {
+      return;
     }
-  };
 
-  const handleClear = () => {
-    setName('');
-    setEmail('');
-    setBody('');
-    setNameError(false);
-    setEmailError(false);
-    setBodyError(false);
+    setIsSubmitting(true);
+
+    const newComment = {
+      name,
+      email,
+      body,
+      postId,
+    };
+
+    client
+      .post<Comment>('/comments', newComment)
+      .then(createdComment => {
+        onAdd(createdComment);
+        setBody('');
+        setBodyError(false);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   return (
@@ -71,6 +100,7 @@ export const NewCommentForm: React.FC = () => {
             className={classNames('input', { 'is-danger': nameError })}
             value={name}
             onChange={handleNameChange}
+            disabled={isSubmitting}
           />
 
           <span className="icon is-small is-left">
@@ -108,6 +138,7 @@ export const NewCommentForm: React.FC = () => {
             className={classNames('input', { 'is-danger': emailError })}
             value={email}
             onChange={handleEmailChange}
+            disabled={isSubmitting}
           />
 
           <span className="icon is-small is-left">
@@ -144,6 +175,7 @@ export const NewCommentForm: React.FC = () => {
             className={classNames('textarea', { 'is-danger': bodyError })}
             value={body}
             onChange={handleBodyChange}
+            disabled={isSubmitting}
           />
         </div>
 
@@ -156,13 +188,22 @@ export const NewCommentForm: React.FC = () => {
 
       <div className="field is-grouped">
         <div className="control">
-          <button type="submit" className="button is-link">
+          <button
+            type="submit"
+            className={classNames('button', 'is-link', {
+              'is-loading': isSubmitting,
+            })}
+          >
             Add
           </button>
         </div>
 
         <div className="control">
-          <button type="reset" className="button is-link is-light">
+          <button
+            type="reset"
+            className="button is-link is-light"
+            disabled={isSubmitting}
+          >
             Clear
           </button>
         </div>
