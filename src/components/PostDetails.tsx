@@ -14,10 +14,12 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [commentDeleteError, setCommentDeleteError] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
+    setCommentDeleteError(false);
 
     client
       .get<Comment[]>(`/comments?postId=${post.id}`)
@@ -30,6 +32,18 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
 
   const addComment = (newComment: Comment) => {
     setComments(prevComments => [...prevComments, newComment]);
+  };
+
+  const deleteComment = (commentId: number) => {
+    const originalComments = [...comments];
+
+    setComments(prevComments => prevComments.filter(c => c.id !== commentId));
+    setCommentDeleteError(false);
+
+    client.delete(`/comments/${commentId}`).catch(() => {
+      setCommentDeleteError(true);
+      setComments(originalComments);
+    });
   };
 
   return (
@@ -62,6 +76,15 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
             <>
               <p className="title is-4">Comments:</p>
 
+              {commentDeleteError && (
+                <div
+                  className="notification is-danger"
+                  data-cy="CommentDeleteError"
+                >
+                  Unable to delete a comment
+                </div>
+              )}
+
               {comments.map(comment => (
                 <article
                   className="message is-small"
@@ -77,6 +100,7 @@ export const PostDetails: React.FC<Props> = ({ post }) => {
                       type="button"
                       className="delete is-small"
                       aria-label="delete"
+                      onClick={() => deleteComment(comment.id)}
                     >
                       delete button
                     </button>

@@ -17,20 +17,24 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onAdd }) => {
   const [emailError, setEmailError] = useState(false);
   const [bodyError, setBodyError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
     setNameError(false);
+    setHasError(false);
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
     setEmailError(false);
+    setHasError(false);
   };
 
   const handleBodyChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBody(event.target.value);
     setBodyError(false);
+    setHasError(false);
   };
 
   const handleClear = () => {
@@ -40,6 +44,7 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onAdd }) => {
     setNameError(false);
     setEmailError(false);
     setBodyError(false);
+    setHasError(false);
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -59,6 +64,7 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onAdd }) => {
     }
 
     setIsSubmitting(true);
+    setHasError(false);
 
     const newComment = {
       name,
@@ -74,7 +80,9 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onAdd }) => {
         setBody('');
         setBodyError(false);
       })
-      .catch(() => {})
+      .catch(() => {
+        setHasError(true);
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -185,6 +193,12 @@ export const NewCommentForm: React.FC<Props> = ({ postId, onAdd }) => {
           </p>
         )}
       </div>
+
+      {hasError && (
+        <div className="notification is-danger" data-cy="CommentAddError">
+          Unable to add a comment
+        </div>
+      )}
 
       <div className="field is-grouped">
         <div className="control">
